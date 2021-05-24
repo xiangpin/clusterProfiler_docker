@@ -16,3 +16,4 @@ Imports:
   TxDb.Hsapiens.UCSC.hg19.knownGene,
   bookdown,
   rmarkdown
+DockerImage: xushuangbin/clusterprofilerdocker:4.0.0
