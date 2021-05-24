@@ -1,0 +1,18 @@
+Package: clusterProfilerDocker
+Imports:
+  BiocManager,
+  ChIPseeker,
+  clusterProfiler,
+  cowplot,
+  DOSE,
+  enrichplot,
+  forcats,
+  ggplot2,
+  ggupset,
+  kableExtra,
+  org.Hs.eg.db,
+  ggnewscale,
+  knitr,  
+  TxDb.Hsapiens.UCSC.hg19.knownGene,
+  bookdown,
+  rmarkdown
