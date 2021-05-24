@@ -2,6 +2,8 @@ on: [push]
 jobs:
   job1:
     runs-on: ubuntu-latest
+    container: bioconductor/bioconductor_docker:RELEASE_3_13
+    steps:
       - uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
