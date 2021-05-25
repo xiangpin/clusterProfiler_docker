@@ -9,9 +9,8 @@ WORKDIR /home/rstudio/clusterProfiler_test
 COPY --chown=rstudio:rstudio . /home/rstudio/clusterProfiler_test
 
 RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); \
-                BiocManager::install(ask=FALSE); \
-                options(BioC_mirror=BiocManager::repositories()); \
-                install.packages(c('ggplot2', 'cowplot', 'ggupset', 'kableExtra', 'ggnewscale', 'knitr', 'rmarkdown', 'bookdown')); \
-                BiocManager::install(c('ChIPseeker', 'clusterProfiler', 'DOSE', 'enrichplot', 'org.Hs.eg.db', 'TxDb.Hsapiens.UCSC.hg19.knownGene'))"
+    install.packages(c('ggplot2', 'cowplot', 'ggupset', 'kableExtra', 'ggnewscale', 'knitr', 'rmarkdown', 'bookdown'));"
+    
+RUN Rscript -e "BiocManager::install(c('ChIPseeker', 'clusterProfiler', 'DOSE', 'enrichplot', 'org.Hs.eg.db', 'TxDb.Hsapiens.UCSC.hg19.knownGene'), ask=FALSE)"
 
 RUN Rscript -e 'rmarkdown::render("supplementary_file.Rmd")'
