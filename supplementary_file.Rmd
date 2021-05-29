@@ -19,7 +19,7 @@ link-citations: yes
 **clusterProfiler 4.0: A universal enrichment tool for functional and comparative study**
 \endgroup
 
-**Tianzhi Wu^§^, Erqiang Hu^§^, Meijun Chen, Pingfan Guo, Zehan Dai, Tingze Feng, Shuangbin Xu, Lang Zhou, Wenli Tang, Li Zhan, Xiaocong Fu, Shanshan Liu, Xiaochen Bo^\*^ and Guangchuang Yu^\*^ **
+**Tianzhi Wu^§^, Erqiang Hu^§^, Shuangbin Xu, Meijun Chen, Pingfan Guo, Zehan Dai, Tingze Feng, Lang Zhou, Wenli Tang, Li Zhan, Xiaocong Fu, Shanshan Liu, Xiaochen Bo^\*^ and Guangchuang Yu^\*^ **
 
 ^\*^correspondence: Guangchuang Yu \<gcyu1@smu.edu.cn\> and Xiaochen Bo \<boxc@bmi.ac.cn\>
 
@@ -55,13 +55,76 @@ library(forcats)
 library(ChIPseeker)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 slice = clusterProfiler::slice
+
+
+CRANpkg <- function (pkg) {
+    cran <- "https://CRAN.R-project.org/package"
+    fmt <- "[%s](%s=%s)"
+    sprintf(fmt, pkg, cran, pkg)
+}
+
+Biocpkg <- function (pkg) {
+    sprintf("[%s](http://bioconductor.org/packages/%s)", pkg, pkg)
+}
+
 ```
 
 
-# R packages that depends on clusterProfiler
+
+# Installation
+
+To install `clusterProfiler` package, please enter the following command in R:
+
+```r
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("clusterProfiler")
+```
+
+To reproduce examples in this document, you need to install several extra packages:
+
+```r
+install.packages(c("forcats", "ggplot2", "ggnewscale", "ggupset"))
+BiocManager::install(c("org.Hs.eg.db", "enrichplot", 
+            "ChIPseeker", "TxDb.Hsapiens.UCSC.hg19.knownGene"))
+```
 
 
-The `clusterProfiler` library is one of the fundamental packages and it had been incorporated in more than twenty R packages (in CRAN or Bioconductor) to perform functional enrichment analysis for different topics, especially for cancer research.
+# Docker image
+
+To help users to build the computing environment, we also provided a docker image^[<https://hub.docker.com/r/xushuangbin/clusterprofilerdocker>]. Users can pull and run it according to the following commands. They don't need to install the dependency packages.
+
+1. Install Docker (https://www.docker.com/). For example:
+
+```bash
+# Terminal of Ubuntu
+sudo apt-get install docker.io
+```
+
+2. Pull the Docker image from Docker Hub:
+
+```bash
+# Terminal of Ubuntu
+sudo docker pull xushuangbin/clusterprofilerdocker:latest
+```
+
+3. Run the image:
+
+```bash
+# Terminal of Ubuntu
+sudo docker run -e PASSWORD=yourpassword -p 8787:8787 xushuangbin/clusterprofilerdocker
+```
+
+4. Log in to RStudio at `http://localhost:8787` using username `rstudio` and password `yourpassword`. For Windows users, you also need to provide your IP address, you can find it using `docker-machine ip default`. Inside the RStudio, you can run the examples provided in this document.
+
+
+Besides, the `r Biocpkg("clusterProfiler")` package can be installed in virtual environment using `conda`, see also <https://anaconda.org/bioconda/bioconductor-clusterprofiler>.
+
+
+# Bioinformatics tools that depends on clusterProfiler
+
+
+The `clusterProfiler` library is one of the fundamental packages and it had been incorporated in more than thirty R packages (in CRAN or Bioconductor) to perform functional enrichment analysis for different topics, especially for cancer research (Table S1). 
 
 ```{r warning=FALSE, message=FALSE}
 db <- utils::available.packages(repo=BiocManager::repositories())
@@ -121,24 +184,131 @@ knitr::kable(d, booktabs = T, position = "!ht", caption = caption) |>
   column_spec(1, width = "9em", latex_valign = "m")
 ```
 
-# Installation
+Moreover, `r Biocpkg("clusterProfiler")` has been incorporated into different workflows and analysis websites (including shiny apps).
 
-To install `clusterProfiler` package, please enter the following command in R:
+**Workflows that incorporates `clusterProfiler`:**
 
-```r
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("clusterProfiler")
++ [TCGA Workflow: Analyze cancer genomics and epigenomics data using Bioconductor packages](https://f1000research.com/articles/5-1542)^[<https://f1000research.com/articles/5-1542>]
++ [Microbe-Flow: a comprehensive workflow for bacterial genomics, pathogenomics and genomic epidemiology](https://neatseq-flow.readthedocs.io/projects/neatseq-flow-modules/en/latest/Workflow_docs/Microbe-Flow.html)^[<https://neatseq-flow.readthedocs.io/projects/neatseq-flow-modules/en/latest/Workflow_docs/Microbe-Flow.html>]
++ [ViralLink: An integrated workflow to investigate the effect of SARS-CoV-2 on intracellular signalling and regulatory pathways](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008685)^[<https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008685>]
++ [Integrative analysis of pooled CRISPR genetic screens using MAGeCKFlute](https://www.nature.com/articles/s41596-018-0113-7)^[<https://www.nature.com/articles/s41596-018-0113-7>]
++ [MUSIC: Model-based Understanding of SIngle-cell CRISPR screening](https://github.com/bm2-lab/MUSIC)^[<https://github.com/bm2-lab/MUSIC>]
++ [An end to end workflow for differential gene expression using Affymetrix microarrays](https://f1000research.com/articles/5-1384/v2)^[<https://f1000research.com/articles/5-1384/v2>]
++ [recount workflow: Accessing over 70,000 human RNA-seq samples with Bioconductor](https://f1000research.com/articles/6-1558)^[<https://f1000research.com/articles/6-1558>]
++ [RNAseq workflow](https://github.com/twbattaglia/RNAseq-workflow)^[<https://github.com/twbattaglia/RNAseq-workflow>]
++ [RNAseq Analysis](https://learn.gencore.bio.nyu.edu/rna-seq-analysis/gene-set-enrichment-analysis/)^[<https://learn.gencore.bio.nyu.edu/rna-seq-analysis/gene-set-enrichment-analysis/>]
++ [Automated transcriptomics data analysis workflow using pathway and network analysis approaches](https://fairdomhub.org/studies/837)^[<https://fairdomhub.org/studies/837>]
+
+
+**Analysis websites (or shiny apps) that incorporates `clusterProfiler`:**
+
++ [NASQAR: a web-based platform for high-throughput sequencing data analysis and visualization](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03577-4)^[<https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03577-4>]
++ [Shiny-Seq: advanced guided transcriptome analysis](https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-019-4471-1)^[<https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-019-4471-1>]
++ [ProteoRE: A biologist-oriented Galaxy platform for proteomics data exploration](https://github.com/vloux/ProteoRE)^[<https://github.com/vloux/ProteoRE>]
++ [Netpredictor: R and Shiny package to perform drug-target network analysis and prediction of missing links](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2254-7)^[<https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2254-7>]
++ [ABioTrans: A Biostatistical Tool for Transcriptomics Analysis](https://www.frontiersin.org/articles/10.3389/fgene.2019.00499/full)^[<https://www.frontiersin.org/articles/10.3389/fgene.2019.00499/full>]
++ [SigBio-Shiny: A standalone interactive application for detecting biological significance on a set of genes](https://github.com/sk-sahu/sig-bio-shiny)^[<https://github.com/sk-sahu/sig-bio-shiny>]
+
+
+# Comparing clusterProfiler with other tools
+
+
+Here, we compare `clusterProfiler` with other R packages that also can perform functional enrichment analysis (Table S2). The packages in Table S2 were ordered by monthly download stats (April 2021). 
+
+```{r eval=FALSE, echo=FALSE}
+load("dlstats.rda")
+y <- data.frame(package=c(dlstats$cran$package, dlstats$bioc$package), 
+      downloads=c(dlstats$cran$downloads, dlstats$bioc$Nb_of_downloads))
+
+ggplot(y, aes(downloads,fct_reorder(package, downloads), fill=downloads)) +
+  geom_col(orientation='y') + 
+  theme_minimal(base_size = 14) + 
+  labs(title="Download stats", 
+        subtitle = "April, 2021", 
+        caption="data obtained using R package, dlstats", 
+        x=NULL, y=NULL) +
+  scale_fill_viridis_c() +
+  theme(legend.position=c(.9, .3))
 ```
 
-To reproduce examples in this document, you need to install several extra packages:
+![](Figures/dlstats-202104.pdf)
 
-```r
-install.packages(c("forcats", "ggplot2", "ggnewscale", "ggupset"))
-BiocManager::install(c("org.Hs.eg.db", "enrichplot", 
-            "ChIPseeker", "TxDb.Hsapiens.UCSC.hg19.knownGene"))
-```
+Focus on the R ecosystem, `clusterProfiler` is the most popular package for functional enrichment analysis. Compare to other tools, `clusterProfiler` has many good features. It internally supports GO and KEGG for thousands of species, allows users to specify background gene set, provides general interface for external annotation data, works with GMT files, and supports comparing functional profiles among different conditions. 
 
+
+Several R packages ouput tabular result (e.g., data frame). Data frame is simple and easy to process and visualize using tidy tools (e.g., dplyr) and ggplot2. However, many useful information including input data, parameter setting and gene set, are missing. These information maybe useful for further interpretation and visualization. Instead, most of the R packages encapsulate enrichment result into more complicated R object (S3, S4 or R6) to include enrichment result with associated data. This will prevent users to explore the result using tidy tools and ggplot2. The `clusterProfiler` and its sub-packages (including `DOSE` and `ReactomePA`) provide tidy interface to process enrichment result and directly supports of visualizing enrichment result in ggplot2. To our knowledge, this feature cannot be found in other R packages that also output enrichment result as complicated R object.    
+
+
+```{r echo=FALSE}
+x <- read.csv("enrichment-packages.csv")
+
+
+header <- gsub("\\.", "\\ ", colnames(x)) %>%
+          linebreak(align="l", linebreaker = ",")
+# header[2] <- paste0(header[2], footnote_marker_symbol(1, "latex"))
+x[,2] = ifelse(x[,2] == "CRAN", 1, 2)
+
+caption = "Comparing clusterProfiler with other tools"
+
+kbl(x, booktabs = T, col.names=header, position = "!ht", caption=caption) %>%
+  kable_styling(latex_options = c("striped", "scale_down"), 
+        full_width=T, font_size=8,
+        stripe_color = "gray!10",
+        position="center") %>%
+  column_spec(1, width="6em") %>%    
+  column_spec(2, width="2em") %>%  
+  column_spec(3, width="8em") %>%
+  column_spec(4, width="5em") %>%
+  column_spec(5, width="4em") %>%
+  column_spec(6, width="3em") %>%
+  column_spec(7, width="4em") %>%
+  column_spec(8, width="3em") %>%
+  column_spec(9, width="8em") %>%  
+  column_spec(10, width="5em") %>%
+  column_spec(11, width="4em") %>%
+  column_spec(12, width="10em") %>%
+  column_spec(13, width="4em") %>%
+  column_spec(14, width="4em") %>%
+  column_spec(15, width="5em") %>% 
+  column_spec(16, width="5em") %>%
+  footnote(number = c("Repo: 1 for CRAN and 2 for Bioconductor", 
+  "Supported organisms: 'NA' for not applicable as there is no species annotation data internally supported by the package; 'plenty' for hundreds or thousands species supported (mostly for KEGG and/or GO)",
+  "Tidy interface: whether the output object can be processed directly using tidy tools such as dplyr",
+  "Support ggplot2: whether the output object can be visualized directly using ggplot2 command",
+  "Y for supported, N for not supported and NA for not applicable")) %>%
+  add_header_above(c(" ", " ", "Input and annotation" = 6, "Method" = 3, "Interpretation" = 5)) %>% 
+  row_spec(0, font_size=8)
+``` 
+ 
+
+# Data sets
+
+Three data sets were used in this document, including:
+
++ `geneList` provided by the `r Biocpkg("DOSE")` package
++ `DE_GSE8057` provided by the `r Biocpkg("clusterProfiler")` package
++ `GSM1295076_CBX6_BF_ChipSeq_mergedReps_peaks.bed.gz` provided by the `r Biocpkg("ChIPseeker")` package
+
+
+The `geneList` was derived from the R package `r Biocpkg("breastCancerMAINZ")` that contains 200 breast cancer samples, including 29 samples in grade I, 136 samples in grade II and 35 samples in grade III. The ratio of geometric mean of grade III samples versue geometric mean of grade I samples for each gene was computed. The `geneList` data set contains logarithm of these ratios (base 2). 
+
+The `DE_GSE8057` data set was derived from the `GSE8057` data set which can be downloaded in GEO and the expreimental design was documented in <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8057>. All the treated samples were compared with control samples by different conditions using the limma package. The `DE_GSE8057` data set contains differential expressed genes (DEGs) for each condition and the DEGs were selected in case of expression values with fold change > 1 or adjusted p value < 0.05.
+
+
+The GSM1295076_CBX6_BF_ChipSeq_mergedReps_peaks.bed.gz file can be accessed via `ChIPseeker::getSampleFiles()[[4]]` or downloaded using the command `ChIPseeker::downloadGSMbedFiles("GSM1295076")`. The experimental design was documented in <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1295076>. 
+
+
+In addition to GO and KEGG, two additional gene sets were used in the manuscript, including:
+
++ ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X
++ WikiPathways
+
+The `ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X` was downloaded from <https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X>. This gene set was used to identify transcriptional factors associated with genomic regions obtained from a ChIPseq experiment. 
+
+The WikiPathways, `wikipathways-20210310-gmt-Homo_sapiens.gmt` was downloaded from <https://wikipathways-data.wmcloud.org/current/gmt/>. This gene set was used to identify biological pathways using community curated knowledge. 
+
+
+\newpage
 
 # Examples of using clusterProfiler
 
@@ -146,7 +316,7 @@ This session provides source codes to reproduce the figures presented in the man
 
 ## GO enrichment analysis
 
-```{r fig.width=17, fig.height=9, fig.cap="Gene ontology enrichment analysis."}
+```{r go, fig.width=17, fig.height=9, fig.cap="Gene ontology enrichment analysis.", warning=FALSE, message=FALSE}
 library(clusterProfiler)
 library(enrichplot)
 
@@ -167,14 +337,14 @@ ego2 <- simplify(ego, cutoff=0.7, by="p.adjust", select_fun=min)
 ego <- pairwise_termsim(ego)
 ego2 <- pairwise_termsim(ego2)
 
-p1 <- emapplot(ego, cex_label_category=.8, cex_line=.5)
-p2 <- emapplot(ego2, cex_label_category=.8, cex_line=.5)
-cowplot::plot_grid(p1, p2, labels=c("A", "B"))
+p1 <- emapplot(ego, cex_label_category=.8, cex_line=.5) + coord_cartesian()
+p2 <- emapplot(ego2, cex_label_category=.8, cex_line=.5) + coord_cartesian()
+cowplot::plot_grid(p1, p2, labels=c("A", "B"), rel_widths=c(1, 1.2))
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 save(ego, ego2, p1, p2, file = "cache/Fig1.rda", compress='xz')
-pg <- cowplot::plot_grid(p1, p2, labels=c("A", "B"))
+pg <- cowplot::plot_grid(p1 + coord_cartesian(), p2 + coord_cartesian(), labels=c("A", "B"), rel_widths=c(1, 1.2))
 ggsave(pg, file="Figures/Fig1.pdf", width=17, height=9)
 ggsave(pg, file="Figures/Fig1.png", width=17, height=9)
 ```
@@ -182,6 +352,7 @@ ggsave(pg, file="Figures/Fig1.png", width=17, height=9)
 ## KEGG enrichment analysis
 
 ```{r fig.width=14, fig.height=6, message=FALSE, warning=FALSE, fig.cap="KEGG pathway enrichment analysis."}
+data(geneList, package="DOSE")
 kk <- gseKEGG(geneList, organism = "hsa")
 
 ## sorted by absolute values of NES
@@ -195,7 +366,7 @@ cowplot::plot_grid(kp1, kp2, rel_widths=c(1, .5), labels=c("A", "B"))
 
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 save(kk, kk2, kp1, kp2, file = "cache/Fig2.rda", compress='xz')
 pg <- cowplot::plot_grid(kp1, kp2, rel_widths=c(1, .5), labels=c("A", "B"))
 
@@ -203,14 +374,7 @@ ggsave(pg, file="Figures/Fig2.png", width=14, height=6)
 ggsave(pg, file="Figures/Fig2.pdf", width=14, height=6)
 ```
 
-## Universal interface for biomedical gene sets
-
-```{r message=FALSE, warning=FALSE}
-## downloaded from https://wikipathways-data.wmcloud.org/current/gmt/
-gmt <- 'wikipathways-20210310-gmt-Homo_sapiens.gmt'
-wp <- read.gmt.wp(gmt)
-ewp <- GSEA(geneList, TERM2GENE=wp[,c("wpid", "gene")], TERM2NAME=wp[,c("wpid", "name")])
-```
+\newpage
 
 ## Functional interpretation of genomic regions of interest
 
@@ -225,7 +389,8 @@ TxDb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 genes <- seq2gene(gr, tssRegion=c(-1000, 1000), flankDistance = 3000, TxDb) 
 
 library(clusterProfiler)
-## downloaded from https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=text&libraryName=ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X
+## downloaded from 'https://maayanlab.cloud/Enrichr/geneSetLibrary?mode=
+## text&libraryName=ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X'
 encode <- read.gmt("ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X.txt")
 g <- bitr(genes, 'ENTREZID', 'SYMBOL', 'org.Hs.eg.db')
 x <- enricher(g$SYMBOL, TERM2GENE=encode)
@@ -233,16 +398,22 @@ enrichplot::cnetplot(x, cex_label_gene=0.6)
 ```
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 save(gr, genes, g, x, file = "cache/Fig3.rda", compress='xz')
 pg <- enrichplot::cnetplot(x, cex_label_gene=0.6)
 ggsave(pg, file="Figures/Fig3.png", width=10, height=7)
 ggsave(pg, file="Figures/Fig3.pdf", width=10, height=7)
 ```
 
+\newpage
+
 ## Comparison for different conditions
 
 ```{r fig.width=9, fig.height=5, fig.show='hide'}
+## downloaded from https://wikipathways-data.wmcloud.org/current/gmt/
+gmt <- 'wikipathways-20210310-gmt-Homo_sapiens.gmt'
+wp <- read.gmt.wp(gmt)
+
 data(DE_GSE8057)
 
 xx <- compareCluster(Gene~time+treatment, data=DE_GSE8057, fun = enricher, 
@@ -257,13 +428,13 @@ print(pp)
 ```
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 save(xx, pp, file = "cache/Fig4.rda", compress='xz')
 ggsave(pp, filename = "Figures/Fig4.pdf", width=9, height=5)
 ggsave(pp, filename = "Figures/Fig4.png", width=9, height=5)
 ```
 
-
+\newpage
 
 ## Visualization using ggplot2
 
@@ -271,9 +442,6 @@ ggsave(pp, filename = "Figures/Fig4.png", width=9, height=5)
 library(forcats)
 library(ggplot2)
 
-## downloaded from https://wikipathways-data.wmcloud.org/current/gmt/
-gmt <- 'wikipathways-20210310-gmt-Homo_sapiens.gmt'
-wp <- read.gmt.wp(gmt)
 ewp <- GSEA(geneList, TERM2GENE=wp[,c("wpid", "gene")], TERM2NAME=wp[,c("wpid", "name")])
 
 ewp2 <- arrange(ewp, abs(NES)) %>% 
@@ -306,7 +474,7 @@ cowplot::plot_grid(g1, g2, labels=c("A", "B"))
 ```
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 pp <- cowplot::plot_grid(g1, g2, labels=c("A", "B"))
 save(ewp2, ego3, g1, g2, file = "cache/Fig5.rda", compress='xz')
 ggsave(pp, filename = "Figures/Fig5.pdf", width=14, height=4)
@@ -318,13 +486,16 @@ ggsave(pp, filename = "Figures/Fig5.png", width=14, height=4)
 **NOTE:** source codes and datasets to produce this file can be obtained online^[<https://github.com/YuLab-SMU/supplemental-clusterProfiler-v4>].
 
 
+\newpage
+
 # Session information
 
 Here is the output of `sessionInfo()` of the system on which the Supplemental file was compiled:
 
+\footnotesize
+
 ```{r, echo=FALSE}
-sessionInfo()
+sessioninfo::session_info() 
 ```
 
 
-# References
